@@ -23,7 +23,8 @@ The act of checking in is called "Dropping a Crumb."
 12 tables: users, follows, blocks, restaurants, checkins, 
 checkin_photos, checkin_dishes, trails, trail_items, 
 likes, comments, notifications
-Full schema in docs/Crumb_Data_Model.docx
+Authoritative SQL: `supabase/migrations/` (see `docs/Crumb_Data_Model.md`).
+`public.users.id` is the Supabase Auth user id (`auth.users`). For client reads that include the private reflection field safely, query the **`checkins_safe`** view (masks `private_note` for non-owners); avoid selecting `private_note` from `checkins` in public clients.
 
 ## Design System
 Warm Minimalism. Newsreader serif + Manrope sans.
