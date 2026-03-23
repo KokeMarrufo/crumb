@@ -1,0 +1,108 @@
+{
+  "tabs": {
+    "journal": "Diario",
+    "explore": "Explorar",
+    "checkin": "Dejar",
+    "trails": "Rutas",
+    "activity": "Actividad"
+  },
+  "stack": {
+    "profile": "Perfil",
+    "restaurant": "Restaurante",
+    "trail": "Ruta",
+    "checkInFlow": "Dejar una Huella"
+  },
+  "journal": {
+    "title": "Diario",
+    "yourCrumbs": "Tus Huellas",
+    "list": "Lista",
+    "grid": "Cuadrícula"
+  },
+  "explore": {
+    "title": "Explorar",
+    "trendingTrails": "Rutas en tendencia",
+    "byCreator": "por {{name}}",
+    "suggestedPeople": "Personas sugeridas",
+    "localSpots": "Sitios cerca",
+    "friendsAreLoving": "A tus amigos les encanta",
+    "friendsLovingFallback": "Dejó una Huella aquí."
+  },
+  "checkin": {
+    "stepProgress": "DEJAR MI HUELLA · PASO {{current}}/5",
+    "close": "Cerrar",
+    "back": "Atrás",
+    "whereEat": "¿Dónde comiste?",
+    "searchPlaceholder": "Buscar restaurantes (simulado)",
+    "photos": "Fotos",
+    "photosMock": "Fotos de ejemplo; aquí iría tu carrete.",
+    "continue": "Continuar",
+    "whatEat": "¿Qué pediste?",
+    "dishPlaceholder": "Plato {{n}}",
+    "rating": "Valoración",
+    "addAnotherDish": "+ Añadir otro plato",
+    "theStory": "La historia",
+    "storyPlaceholder": "¿Qué hizo especial esta comida?",
+    "privateReflection": "Reflexión privada",
+    "privateReflectionHint": "Reflexión Privada — solo tú la ves",
+    "privateNotePlaceholder": "Una nota que no tienes por qué compartir.",
+    "dropCrumb": "DEJAR MI HUELLA",
+    "toastTitle": "Huella guardada",
+    "toastSubtitle": "Guardado en tu diario (simulado)."
+  },
+  "trails": {
+    "title": "Rutas"
+  },
+  "trailDetail": {
+    "rankLabel": "#{{rank}}",
+    "curatedBy": "Seleccionada por {{name}}",
+    "defaultQuote": "Una parada que merece la pena recordar.",
+    "dishes": "Platos",
+    "starSuffix": " · {{n}}★",
+    "tapCollapse": "Toca para plegar",
+    "tapExpand": "Toca para ampliar"
+  },
+  "activity": {
+    "title": "Actividad",
+    "followRequests": "Solicitudes de seguimiento",
+    "wantsToFollow": "quiere seguirte",
+    "approve": "Aceptar",
+    "deny": "Rechazar",
+    "notifications": {
+      "new_follower": "{{name}} empezó a seguirte",
+      "follow_request": "{{name}} quiere seguirte",
+      "follow_approved": "{{name}} aceptó tu solicitud",
+      "friend_checkin_at_your_place": "{{name}} dejó una Huella en un sitio que te encanta",
+      "new_like": "A {{name}} le gustó tu Huella",
+      "new_comment": "{{name}} comentó tu Huella"
+    }
+  },
+  "restaurantDetail": {
+    "loading": "…",
+    "myHistory": "Mi historial",
+    "onlyYou": "Solo tú",
+    "friendsCrumbs": "Huellas de amigos",
+    "friendsEmpty": "Ningún amigo ha dejado una Huella aquí todavía.",
+    "appearsInTrails": "Aparece en rutas",
+    "stopRank": "Parada n.º {{rank}}"
+  },
+  "profile": {
+    "crumbs": "Huellas",
+    "followers": "Seguidores",
+    "following": "Siguiendo",
+    "sectionCrumbs": "Huellas",
+    "sectionTrails": "Rutas",
+    "view": "Ver",
+    "language": "Idioma",
+    "languageEnglish": "English 🇺🇸",
+    "languageSpanish": "Español 🇪🇸"
+  },
+  "common": {
+    "ellipsis": "…",
+    "likesReplies": "{{date}} · {{likes}} me gusta · {{replies}} respuestas",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "follow": "Seguir",
+    "unfollow": "Dejar de seguir",
+    "loading": "Cargando…"
+  }
+}

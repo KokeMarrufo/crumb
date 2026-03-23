@@ -34,9 +34,9 @@ Full design system in docs/Crumb_DESIGN.md
 - docs/Crumb_MVP_User_Stories.docx
 - docs/Crumb_Data_Model.docx  
 - docs/Crumb_DESIGN.md
-```
 
 **My suggestion for your project structure before you start:**
+
 ```
 crumb/
 ├── CLAUDE.md          ← Claude reads this automatically
@@ -46,3 +46,4 @@ crumb/
 │   └── Crumb_DESIGN.md
 ├── src/
 └── ...
+```

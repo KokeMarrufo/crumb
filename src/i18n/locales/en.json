@@ -1,0 +1,108 @@
+{
+  "tabs": {
+    "journal": "Journal",
+    "explore": "Explore",
+    "checkin": "Drop",
+    "trails": "Trails",
+    "activity": "Activity"
+  },
+  "stack": {
+    "profile": "Profile",
+    "restaurant": "Restaurant",
+    "trail": "Trail",
+    "checkInFlow": "Drop a Crumb"
+  },
+  "journal": {
+    "title": "Journal",
+    "yourCrumbs": "Your Crumbs",
+    "list": "List",
+    "grid": "Grid"
+  },
+  "explore": {
+    "title": "Explore",
+    "trendingTrails": "Trending Trails",
+    "byCreator": "by {{name}}",
+    "suggestedPeople": "Suggested people",
+    "localSpots": "Local spots",
+    "friendsAreLoving": "Friends are loving",
+    "friendsLovingFallback": "Dropped a Crumb here."
+  },
+  "checkin": {
+    "stepProgress": "DROP A CRUMB · STEP {{current}}/5",
+    "close": "Close",
+    "back": "Back",
+    "whereEat": "Where did you eat?",
+    "searchPlaceholder": "Search restaurants (mock)",
+    "photos": "Photos",
+    "photosMock": "Mock photos stand in for your camera roll.",
+    "continue": "Continue",
+    "whatEat": "What did you eat?",
+    "dishPlaceholder": "Dish {{n}}",
+    "rating": "Rating",
+    "addAnotherDish": "+ Add another dish",
+    "theStory": "The story",
+    "storyPlaceholder": "What made this meal memorable?",
+    "privateReflection": "Private reflection",
+    "privateReflectionHint": "Private Reflection — only visible to you",
+    "privateNotePlaceholder": "A note you never have to share.",
+    "dropCrumb": "DROP THIS CRUMB",
+    "toastTitle": "Crumb dropped",
+    "toastSubtitle": "Saved to your journal (mock)."
+  },
+  "trails": {
+    "title": "Trails"
+  },
+  "trailDetail": {
+    "rankLabel": "#{{rank}}",
+    "curatedBy": "Curated by {{name}}",
+    "defaultQuote": "A stop worth remembering.",
+    "dishes": "Dishes",
+    "starSuffix": " · {{n}}★",
+    "tapCollapse": "Tap to collapse",
+    "tapExpand": "Tap to expand"
+  },
+  "activity": {
+    "title": "Activity",
+    "followRequests": "Follow requests",
+    "wantsToFollow": "wants to follow you",
+    "approve": "Approve",
+    "deny": "Deny",
+    "notifications": {
+      "new_follower": "{{name}} started following you",
+      "follow_request": "{{name}} requested to follow you",
+      "follow_approved": "{{name}} approved your follow request",
+      "friend_checkin_at_your_place": "{{name}} dropped a Crumb somewhere you love",
+      "new_like": "{{name}} liked your Crumb",
+      "new_comment": "{{name}} commented on your Crumb"
+    }
+  },
+  "restaurantDetail": {
+    "loading": "…",
+    "myHistory": "My History",
+    "onlyYou": "Only you",
+    "friendsCrumbs": "Friends' Crumbs",
+    "friendsEmpty": "No friends have dropped a Crumb here yet.",
+    "appearsInTrails": "Appears in Trails",
+    "stopRank": "Stop #{{rank}}"
+  },
+  "profile": {
+    "crumbs": "Crumbs",
+    "followers": "Followers",
+    "following": "Following",
+    "sectionCrumbs": "Crumbs",
+    "sectionTrails": "Trails",
+    "view": "View",
+    "language": "Language",
+    "languageEnglish": "English 🇺🇸",
+    "languageSpanish": "Español 🇪🇸"
+  },
+  "common": {
+    "ellipsis": "…",
+    "likesReplies": "{{date}} · {{likes}} likes · {{replies}} replies",
+    "save": "Save",
+    "cancel": "Cancel",
+    "follow": "Follow",
+    "unfollow": "Unfollow",
+    "loading": "Loading…"
+  }
+}
