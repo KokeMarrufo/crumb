@@ -2,7 +2,9 @@ import { useCallback, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Image } from 'expo-image';
 import { useTranslation } from 'react-i18next';
-import { MOCK_CURRENT_USER_ID } from '../../data/mockData';
+import Toast from 'react-native-toast-message';
+import { useAuth } from '../../auth/AuthContext';
+import { useViewerId } from '../../auth/useViewerId';
 import { persistLanguage } from '../../i18n';
 import { navigateTrail } from '../../navigation/navigationHelpers';
 import { getCrumbsCountForUser, getCrumbsForProfile } from '../../services/checkins';
@@ -11,8 +13,10 @@ import { getTrailsForUser } from '../../services/trails';
 import { getUserById } from '../../services/users';
 import type { JournalFeedItem } from '../../services/types';
 import type { Trail } from '../../types/models';
+import type { User } from '../../types/models';
 import { tokens } from '../../theme/tokens';
 import { AppText } from '../../theme/typography';
+import { Avatar } from '../../components/Avatar';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../navigation/types';
 import { useFocusEffect } from '@react-navigation/native';
@@ -21,9 +25,12 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Profile'>;
 
 export function ProfileScreen({ route }: Props) {
   const { t, i18n } = useTranslation();
-  const userId = route.params?.userId ?? MOCK_CURRENT_USER_ID;
-  const [name, setName] = useState('');
-  const [bio, setBio] = useState<string | null>(null);
+  const viewerId = useViewerId();
+  const { signOut } = useAuth();
+  const userId = route.params?.userId ?? viewerId;
+  /** True when viewing own profile (no param or param matches session). */
+  const isOwnProfile = !route.params?.userId || route.params.userId === viewerId;
+  const [profile, setProfile] = useState<User | null>(null);
   const [crumbs, setCrumbs] = useState<JournalFeedItem[]>([]);
   const [trails, setTrails] = useState<Trail[]>([]);
   const [stats, setStats] = useState({ crumbs: 0, followers: 0, following: 0 });
@@ -34,30 +41,39 @@ export function ProfileScreen({ route }: Props) {
     useCallback(() => {
       Promise.all([
         getUserById(userId),
-        getCrumbsForProfile(userId, MOCK_CURRENT_USER_ID),
+        getCrumbsForProfile(userId, viewerId),
         getTrailsForUser(userId),
         getCrumbsCountForUser(userId),
         getFollowerCount(userId),
         getFollowingCount(userId),
       ]).then(([u, c, tr, cc, fo, fi]) => {
-        setName(u.full_name);
-        setBio(u.bio);
+        setProfile(u);
         setCrumbs(c);
         setTrails(tr);
         setStats({ crumbs: cc, followers: fo, following: fi });
       });
-    }, [userId]),
+    }, [userId, viewerId]),
   );
 
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
       <View style={styles.header}>
-        <AppText variant="display" style={styles.name}>
-          {name}
-        </AppText>
-        {bio ? (
+        <View style={styles.headerTop}>
+          <Avatar uri={profile?.avatar_url ?? null} size={88} />
+          <View style={styles.headerText}>
+            <AppText variant="display" style={styles.name}>
+              {profile?.full_name ?? ''}
+            </AppText>
+            {profile?.username ? (
+              <AppText variant="label" style={styles.handle}>
+                @{profile.username}
+              </AppText>
+            ) : null}
+          </View>
+        </View>
+        {profile?.bio ? (
           <AppText variant="body" style={styles.bio}>
-            {bio}
+            {profile.bio}
           </AppText>
         ) : null}
         <View style={styles.stats}>
@@ -125,6 +141,24 @@ export function ProfileScreen({ route }: Props) {
           <AppText variant="label">{t('profile.view')}</AppText>
         </Pressable>
       ))}
+
+      {isOwnProfile ? (
+        <Pressable
+          style={styles.signOut}
+          onPress={async () => {
+            try {
+              await signOut();
+            } catch (e: unknown) {
+              const msg = e instanceof Error ? e.message : t('auth.unknownError');
+              Toast.show({ type: 'error', text1: t('auth.signOutFailed'), text2: msg });
+            }
+          }}
+        >
+          <AppText variant="title" style={styles.signOutText}>
+            {t('auth.signOut')}
+          </AppText>
+        </Pressable>
+      ) : null}
     </ScrollView>
   );
 }
@@ -133,8 +167,11 @@ const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: tokens.surface },
   content: { paddingBottom: 48 },
   header: { padding: tokens.space[4], backgroundColor: tokens.surfaceContainerLow },
-  name: { marginBottom: 8 },
-  bio: { opacity: 0.85 },
+  headerTop: { flexDirection: 'row', alignItems: 'center', gap: tokens.space[4] },
+  headerText: { flex: 1 },
+  name: { marginBottom: 4 },
+  handle: { opacity: 0.65 },
+  bio: { opacity: 0.85, marginTop: tokens.space[3] },
   stats: { flexDirection: 'row', marginTop: tokens.space[5], justifyContent: 'space-between' },
   stat: { alignItems: 'center', flex: 1 },
   section: { paddingHorizontal: tokens.space[4], marginTop: tokens.space[5], marginBottom: 8 },
@@ -174,4 +211,13 @@ const styles = StyleSheet.create({
     borderRadius: tokens.radiusXl,
     marginBottom: 8,
   },
+  signOut: {
+    marginHorizontal: tokens.space[4],
+    marginTop: tokens.space[8],
+    padding: tokens.space[4],
+    borderRadius: tokens.radiusLg,
+    backgroundColor: tokens.surfaceContainerHighest,
+    alignItems: 'center',
+  },
+  signOutText: { color: tokens.primary },
 });

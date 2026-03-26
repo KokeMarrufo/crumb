@@ -1,5 +1,4 @@
 import {
-  MOCK_CURRENT_USER_ID,
   mockCheckinDishes,
   mockCheckinPhotos,
   mockCheckins,

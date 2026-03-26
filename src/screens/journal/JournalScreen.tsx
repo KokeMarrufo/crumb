@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { CrumbCard } from '../../components/CrumbCard';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { navigateRestaurant } from '../../navigation/navigationHelpers';
-import { MOCK_CURRENT_USER_ID } from '../../data/mockData';
+import { useViewerId } from '../../auth/useViewerId';
 import { getJournalFeed } from '../../services/checkins';
 import type { JournalFeedItem } from '../../services/types';
 import { tokens } from '../../theme/tokens';
@@ -13,13 +13,14 @@ import { useFocusEffect } from '@react-navigation/native';
 
 export function JournalScreen() {
   const { t } = useTranslation();
+  const viewerId = useViewerId();
   const [feed, setFeed] = useState<JournalFeedItem[]>([]);
   const [layout, setLayout] = useState<'list' | 'grid'>('list');
 
   useFocusEffect(
     useCallback(() => {
-      getJournalFeed(MOCK_CURRENT_USER_ID).then(setFeed);
-    }, []),
+      getJournalFeed(viewerId).then(setFeed);
+    }, [viewerId]),
   );
 
   return (

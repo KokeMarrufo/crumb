@@ -3,7 +3,7 @@ import { Image } from 'expo-image';
 import { FlatList, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { ScreenHeader } from '../../components/ScreenHeader';
-import { MOCK_CURRENT_USER_ID } from '../../data/mockData';
+import { useViewerId } from '../../auth/useViewerId';
 import { navigateProfile, navigateRestaurant, navigateTrail } from '../../navigation/navigationHelpers';
 import { getExploreData } from '../../services/explore';
 import { tokens } from '../../theme/tokens';
@@ -14,12 +14,13 @@ import { Avatar } from '../../components/Avatar';
 
 export function ExploreScreen() {
   const { t } = useTranslation();
+  const viewerId = useViewerId();
   const [data, setData] = useState<ExploreData | null>(null);
 
   useFocusEffect(
     useCallback(() => {
-      getExploreData(MOCK_CURRENT_USER_ID).then(setData);
-    }, []),
+      getExploreData(viewerId).then(setData);
+    }, [viewerId]),
   );
 
   return (

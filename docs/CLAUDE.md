@@ -8,9 +8,9 @@ The act of checking in is called "Dropping a Crumb."
 
 ## Tech Stack
 - React Native (New Architecture — Fabric + JSI)
-- Supabase (PostgreSQL, Auth, RLS, Edge Functions)
+- Supabase (PostgreSQL, Auth, RLS, Edge Functions) — client: `@supabase/supabase-js`, env: `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY` in `.env` (see `.env.example`)
 - Cloudflare R2 for media storage
-- Google Places API (New) for restaurant data
+- Google Places API (New) for restaurant search — `EXPO_PUBLIC_GOOGLE_PLACES_API_KEY` in `.env` (mock search only when unset; **Supabase is not required** for search, only for persisting `restaurants` rows)
 
 ## Key conventions
 - All database IDs are UUIDs

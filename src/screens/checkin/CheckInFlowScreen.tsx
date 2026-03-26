@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { useTranslation } from 'react-i18next';
@@ -7,7 +7,7 @@ import { PrimaryButton } from '../../components/PrimaryButton';
 import { IngredientChip } from '../../components/IngredientChip';
 import { RatingStars } from '../../components/RatingStars';
 import { FOOD_IMAGE_URLS } from '../../data/mockData';
-import { getRestaurantSearchResults } from '../../services/restaurants';
+import { getRestaurantSearchResults, upsertRestaurantForCheckin } from '../../services/restaurants';
 import type { Restaurant } from '../../types/models';
 import { tokens } from '../../theme/tokens';
 import { AppText } from '../../theme/typography';
@@ -28,11 +28,25 @@ export function CheckInFlowScreen({ navigation }: Props) {
   const [dishes, setDishes] = useState<DishDraft[]>([{ id: '1', name: '', rating: 5 }]);
   const [story, setStory] = useState('');
   const [privateReflection, setPrivateReflection] = useState('');
+  const [searchLoading, setSearchLoading] = useState(false);
+  const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const runSearch = async (q: string) => {
+  const runSearch = (q: string) => {
     setQuery(q);
-    const r = await getRestaurantSearchResults(q);
-    setResults(r);
+    if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+    searchDebounceRef.current = setTimeout(async () => {
+      try {
+        setSearchLoading(true);
+        const r = await getRestaurantSearchResults(q);
+        setResults(r);
+      } catch (e: unknown) {
+        setResults([]);
+        const msg = e instanceof Error ? e.message : t('auth.unknownError');
+        Toast.show({ type: 'error', text1: t('checkin.searchFailed'), text2: msg });
+      } finally {
+        setSearchLoading(false);
+      }
+    }, 350);
   };
 
   const addDish = () => {
@@ -40,7 +54,19 @@ export function CheckInFlowScreen({ navigation }: Props) {
   };
 
   useEffect(() => {
-    getRestaurantSearchResults('').then(setResults);
+    let cancelled = false;
+    (async () => {
+      try {
+        const r = await getRestaurantSearchResults('');
+        if (!cancelled) setResults(r);
+      } catch {
+        if (!cancelled) setResults([]);
+      }
+    })();
+    return () => {
+      cancelled = true;
+      if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+    };
   }, []);
 
   const submit = () => {
@@ -76,18 +102,34 @@ export function CheckInFlowScreen({ navigation }: Props) {
               placeholderTextColor={tokens.onSurfaceVariant}
               style={styles.input}
             />
+            {searchLoading ? (
+              <AppText variant="label" style={styles.muted}>
+                {t('common.loading')}
+              </AppText>
+            ) : null}
+            {!searchLoading && query.trim().length > 0 && results.length === 0 ? (
+              <AppText variant="body" style={styles.muted}>
+                {t('checkin.noResults')}
+              </AppText>
+            ) : null}
             {results.map((item) => (
               <Pressable
-                key={item.id}
+                key={item.place_id || item.id}
                 style={styles.result}
-                onPress={() => {
-                  setPicked(item);
-                  setStep(1);
+                onPress={async () => {
+                  try {
+                    const saved = await upsertRestaurantForCheckin(item);
+                    setPicked(saved);
+                    setStep(1);
+                  } catch (e: unknown) {
+                    const msg = e instanceof Error ? e.message : t('auth.unknownError');
+                    Toast.show({ type: 'error', text1: t('checkin.restaurantSaveFailed'), text2: msg });
+                  }
                 }}
               >
                 <AppText variant="title">{item.name}</AppText>
-                <AppText variant="body" style={styles.muted}>
-                  {item.city}
+                <AppText variant="body" style={styles.muted} numberOfLines={2}>
+                  {[item.city, item.address].filter(Boolean).join(' · ')}
                 </AppText>
               </Pressable>
             ))}

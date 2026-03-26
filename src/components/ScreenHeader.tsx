@@ -1,7 +1,9 @@
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { MOCK_CURRENT_USER_ID } from '../data/mockData';
+import { useAuth } from '../auth/AuthContext';
+import { useViewerId } from '../auth/useViewerId';
 import { navigateProfile } from '../navigation/navigationHelpers';
+import { hasSupabaseConfig } from '../lib/env';
 import { getCurrentUser } from '../services/users';
 import { tokens } from '../theme/tokens';
 import { AppText } from '../theme/typography';
@@ -17,19 +19,29 @@ type Props = {
 
 export function ScreenHeader({ title, profileUserId }: Props) {
   const insets = useSafeAreaInsets();
+  const viewerId = useViewerId();
+  const { session } = useAuth();
   const [me, setMe] = useState<User | null>(null);
 
   useEffect(() => {
+    if (hasSupabaseConfig() && !session?.user) {
+      setMe(null);
+      return;
+    }
     let mounted = true;
-    getCurrentUser().then((u) => {
-      if (mounted) setMe(u);
-    });
+    getCurrentUser()
+      .then((u) => {
+        if (mounted) setMe(u);
+      })
+      .catch(() => {
+        if (mounted) setMe(null);
+      });
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [session?.user?.id]);
 
-  const uid = profileUserId ?? MOCK_CURRENT_USER_ID;
+  const uid = profileUserId ?? viewerId;
 
   return (
     <View style={[styles.bar, { paddingTop: insets.top + 8 }]}>

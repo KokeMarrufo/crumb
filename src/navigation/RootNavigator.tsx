@@ -3,9 +3,13 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { BlurView } from 'expo-blur';
-import { Platform, Pressable, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../auth/AuthContext';
+import { ConfigMissingScreen } from '../screens/auth/ConfigMissingScreen';
+import { LoginScreen } from '../screens/auth/LoginScreen';
+import { SignUpScreen } from '../screens/auth/SignUpScreen';
 import { ActivityScreen } from '../screens/activity/ActivityScreen';
 import { CheckInFlowScreen } from '../screens/checkin/CheckInFlowScreen';
 import { CheckInPlaceholderScreen } from '../screens/checkin/CheckInPlaceholderScreen';
@@ -21,6 +25,7 @@ import { rootNavRef } from './rootNavRef';
 import type { MainTabParamList, RootStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
+const AuthStack = createNativeStackNavigator<Pick<RootStackParamList, 'Login' | 'SignUp'>>();
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
 const navTheme = {
@@ -119,38 +124,81 @@ function MainTabs() {
   );
 }
 
-export function RootNavigator() {
+function AppStack() {
   const { t } = useTranslation();
 
   return (
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: tokens.surface },
+        headerTitleStyle: { fontFamily: 'Newsreader_600SemiBold', color: tokens.onSurface },
+        headerTintColor: tokens.primary,
+        contentStyle: { backgroundColor: tokens.surface },
+      }}
+    >
+      <Stack.Screen name="MainTabs" component={MainTabs} options={{ headerShown: false }} />
+      <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: t('stack.profile') }} />
+      <Stack.Screen
+        name="RestaurantDetail"
+        component={RestaurantDetailScreen}
+        options={{ title: t('stack.restaurant') }}
+      />
+      <Stack.Screen name="TrailDetail" component={TrailDetailScreen} options={{ title: t('stack.trail') }} />
+      <Stack.Screen
+        name="CheckInFlow"
+        component={CheckInFlowScreen}
+        options={{ title: t('stack.checkInFlow'), presentation: 'modal' }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+function AuthNavigator() {
+  const { t } = useTranslation();
+
+  return (
+    <AuthStack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: tokens.surface },
+        headerTitleStyle: { fontFamily: 'Newsreader_600SemiBold', color: tokens.onSurface },
+        headerTintColor: tokens.primary,
+        contentStyle: { backgroundColor: tokens.surface },
+      }}
+    >
+      <AuthStack.Screen name="Login" component={LoginScreen} options={{ title: t('auth.signIn') }} />
+      <AuthStack.Screen name="SignUp" component={SignUpScreen} options={{ title: t('auth.signUp') }} />
+    </AuthStack.Navigator>
+  );
+}
+
+export function RootNavigator() {
+  const { session, loading, configured } = useAuth();
+
+  if (loading) {
+    return (
+      <View style={styles.boot}>
+        <ActivityIndicator size="large" color={tokens.primary} />
+      </View>
+    );
+  }
+
+  if (!configured) {
+    return (
+      <NavigationContainer ref={rootNavRef} theme={navTheme}>
+        <ConfigMissingScreen />
+      </NavigationContainer>
+    );
+  }
+
+  return (
     <NavigationContainer ref={rootNavRef} theme={navTheme}>
-      <Stack.Navigator
-        screenOptions={{
-          headerStyle: { backgroundColor: tokens.surface },
-          headerTitleStyle: { fontFamily: 'Newsreader_600SemiBold', color: tokens.onSurface },
-          headerTintColor: tokens.primary,
-          contentStyle: { backgroundColor: tokens.surface },
-        }}
-      >
-        <Stack.Screen name="MainTabs" component={MainTabs} options={{ headerShown: false }} />
-        <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: t('stack.profile') }} />
-        <Stack.Screen
-          name="RestaurantDetail"
-          component={RestaurantDetailScreen}
-          options={{ title: t('stack.restaurant') }}
-        />
-        <Stack.Screen name="TrailDetail" component={TrailDetailScreen} options={{ title: t('stack.trail') }} />
-        <Stack.Screen
-          name="CheckInFlow"
-          component={CheckInFlowScreen}
-          options={{ title: t('stack.checkInFlow'), presentation: 'modal' }}
-        />
-      </Stack.Navigator>
+      {session ? <AppStack /> : <AuthNavigator />}
     </NavigationContainer>
   );
 }
 
 const styles = StyleSheet.create({
+  boot: { flex: 1, backgroundColor: tokens.surface, alignItems: 'center', justifyContent: 'center' },
   centerTabWrap: {
     flex: 1,
     alignItems: 'center',

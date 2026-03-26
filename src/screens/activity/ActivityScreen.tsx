@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { FlatList, Pressable, StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { ScreenHeader } from '../../components/ScreenHeader';
-import { MOCK_CURRENT_USER_ID } from '../../data/mockData';
+import { useViewerId } from '../../auth/useViewerId';
 import { navigateProfile } from '../../navigation/navigationHelpers';
 import { getNotifications } from '../../services/notifications';
 import {
@@ -18,13 +18,14 @@ import type { Notification as CrumbNotification } from '../../types/models';
 
 export function ActivityScreen() {
   const { t, i18n } = useTranslation();
+  const viewerId = useViewerId();
   const [rows, setRows] = useState<{ notification: CrumbNotification; actorName: string; actorAvatar: string | null }[]>(
     [],
   );
   const [pending, setPending] = useState<{ followId: string; username: string; avatar: string | null }[]>([]);
 
   const load = useCallback(async () => {
-    const n = await getNotifications(MOCK_CURRENT_USER_ID);
+    const n = await getNotifications(viewerId);
     setRows(
       n.map((x) => ({
         notification: x.notification,
@@ -32,9 +33,9 @@ export function ActivityScreen() {
         actorAvatar: x.actor.avatar_url,
       })),
     );
-    const p = await getPendingFollowRequestsForUser(MOCK_CURRENT_USER_ID);
+    const p = await getPendingFollowRequestsForUser(viewerId);
     setPending(p.map((x) => ({ followId: x.follow.id, username: x.user.username, avatar: x.user.avatar_url })));
-  }, []);
+  }, [viewerId]);
 
   useFocusEffect(
     useCallback(() => {

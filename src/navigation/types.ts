@@ -1,4 +1,6 @@
 export type RootStackParamList = {
+  Login: undefined;
+  SignUp: undefined;
   MainTabs: undefined;
   Profile: { userId?: string } | undefined;
   RestaurantDetail: { restaurantId: string };

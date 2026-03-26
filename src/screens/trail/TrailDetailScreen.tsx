@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { Image } from 'expo-image';
 import { LayoutAnimation, Platform, Pressable, ScrollView, StyleSheet, UIManager, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { MOCK_CURRENT_USER_ID } from '../../data/mockData';
+import { useViewerId } from '../../auth/useViewerId';
 import { getTrailById } from '../../services/trails';
 import type { TrailDetailResult } from '../../services/types';
 import { tokens } from '../../theme/tokens';
@@ -20,14 +20,15 @@ type Props = NativeStackScreenProps<RootStackParamList, 'TrailDetail'>;
 
 export function TrailDetailScreen({ route }: Props) {
   const { t, i18n } = useTranslation();
+  const viewerId = useViewerId();
   const { trailId } = route.params;
   const [data, setData] = useState<TrailDetailResult | null>(null);
   const [open, setOpen] = useState<Record<string, boolean>>({});
 
   useFocusEffect(
     useCallback(() => {
-      getTrailById(trailId, MOCK_CURRENT_USER_ID).then(setData);
-    }, [trailId]),
+      getTrailById(trailId, viewerId).then(setData);
+    }, [trailId, viewerId]),
   );
 
   const toggle = (id: string) => {

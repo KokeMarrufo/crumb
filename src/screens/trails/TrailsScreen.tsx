@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { FlatList, Pressable, StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { ScreenHeader } from '../../components/ScreenHeader';
-import { MOCK_CURRENT_USER_ID } from '../../data/mockData';
+import { useViewerId } from '../../auth/useViewerId';
 import { navigateTrail } from '../../navigation/navigationHelpers';
 import { getTrailsForUser } from '../../services/trails';
 import type { Trail } from '../../types/models';
@@ -12,12 +12,13 @@ import { useFocusEffect } from '@react-navigation/native';
 
 export function TrailsScreen() {
   const { t } = useTranslation();
+  const viewerId = useViewerId();
   const [trails, setTrails] = useState<Trail[]>([]);
 
   useFocusEffect(
     useCallback(() => {
-      getTrailsForUser(MOCK_CURRENT_USER_ID).then(setTrails);
-    }, []),
+      getTrailsForUser(viewerId).then(setTrails);
+    }, [viewerId]),
   );
 
   return (

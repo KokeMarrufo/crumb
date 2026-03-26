@@ -16,6 +16,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { I18nextProvider } from 'react-i18next';
 import Toast from 'react-native-toast-message';
+import { AuthProvider } from './src/auth/AuthContext';
 import i18n, { initI18n } from './src/i18n';
 import { RootNavigator } from './src/navigation/RootNavigator';
 import { tokens } from './src/theme/tokens';
@@ -49,15 +50,17 @@ export default function App() {
 
   return (
     <I18nextProvider i18n={i18n}>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <SafeAreaProvider>
-          <View style={{ flex: 1, backgroundColor: tokens.surface }}>
-            <StatusBar barStyle="dark-content" />
-            <RootNavigator />
-            <Toast />
-          </View>
-        </SafeAreaProvider>
-      </GestureHandlerRootView>
+      <AuthProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <SafeAreaProvider>
+            <View style={{ flex: 1, backgroundColor: tokens.surface }}>
+              <StatusBar barStyle="dark-content" />
+              <RootNavigator />
+              <Toast />
+            </View>
+          </SafeAreaProvider>
+        </GestureHandlerRootView>
+      </AuthProvider>
     </I18nextProvider>
   );
 }

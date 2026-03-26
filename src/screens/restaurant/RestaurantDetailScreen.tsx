@@ -3,7 +3,7 @@ import { Image } from 'expo-image';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { CrumbCard } from '../../components/CrumbCard';
-import { MOCK_CURRENT_USER_ID } from '../../data/mockData';
+import { useViewerId } from '../../auth/useViewerId';
 import { navigateRestaurant, navigateTrail } from '../../navigation/navigationHelpers';
 import type { RootStackParamList } from '../../navigation/types';
 import { getRestaurantDetail } from '../../services/restaurants';
@@ -17,13 +17,14 @@ type Props = NativeStackScreenProps<RootStackParamList, 'RestaurantDetail'>;
 
 export function RestaurantDetailScreen({ route }: Props) {
   const { t } = useTranslation();
+  const viewerId = useViewerId();
   const { restaurantId } = route.params;
   const [data, setData] = useState<RestaurantDetailResult | null>(null);
 
   useFocusEffect(
     useCallback(() => {
-      getRestaurantDetail(restaurantId, MOCK_CURRENT_USER_ID).then(setData);
-    }, [restaurantId]),
+      getRestaurantDetail(restaurantId, viewerId).then(setData);
+    }, [restaurantId, viewerId]),
   );
 
   const hero = data?.my_crumbs[0]?.photos[0]?.url ?? data?.friends_crumbs[0]?.photos[0]?.url;
